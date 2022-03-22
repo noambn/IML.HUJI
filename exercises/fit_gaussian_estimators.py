@@ -32,7 +32,7 @@ def test_univariate_gaussian():
     fig.update_yaxes(title_text="Loss")
     fig.update_layout(
         title_text=r"$\text{(question 2) Loss as function of sample size}$")
-    # fig.show()
+    fig.show()
     # Question 3 - Plotting Empirical PDF of fitted model
     # raise NotImplementedError()
     # X = s
@@ -48,22 +48,66 @@ def test_univariate_gaussian():
 def test_multivariate_gaussian():
     # Question 4 - Draw samples and print fitted model
     # raise NotImplementedError()
-    mu = [0, 0, 4, 0]
-    sigma = [[1, 0.2, 0, 0.5], [0.2, 2, 0, 0], [0, 0, 1, 0], [0.5, 0, 0, 1]]
+    mu = np.array([0, 0, 4, 0])
+    sigma = np.array([[1, 0.2, 0, 0.5], [0.2, 2, 0, 0], [0, 0, 1, 0], [0.5, 0, 0, 1]])
     s = np.random.multivariate_normal(mu, sigma, 1000)
     estimator = MultivariateGaussian()
     estimator.fit(s)
-    # print((estimator.mu_, estimator.cov_))
-    print(estimator.pdf(s))
+    print(estimator.mu_)
+    print(estimator.cov_)
+
+    # print(estimator.pdf(s))
 
     # Question 5 - Likelihood evaluation
-    raise NotImplementedError()
+    # raise NotImplementedError()
+    print(estimator.log_likelihood(mu, sigma, s))
+
+    f = np.linspace(-10, 10, 200)
+    f1 = f
+    f3 = f
+    center = []
+    max_likelihood = - 100000
+    for i in f1:
+        new = []
+        for j in f3:
+            mu_for_likelihood = np.array([i, 0, j, 0])
+            likelihood = estimator.log_likelihood(mu_for_likelihood, sigma, s)
+            if max_likelihood < likelihood:
+                max_likelihood = likelihood
+                max_i = i
+                max_j = j
+            new.append(likelihood)
+        center.append(new)
+
+
+    fig = go.Figure().add_trace(go.Heatmap(x=f, y=f, z=center, colorscale = 'Greens', reversescale = True, xaxis = 'x', yaxis = 'y'))
+    fig.update_layout(width=700, height=700)
+    fig.update_xaxes(title_text="f1")
+    fig.update_yaxes(title_text="f3")
+    fig.update_layout(
+        title_text=r"$\text{(question 5) heatmap of log-likelihood for f1 and f3 in mean}$",
+        title_font_size=30)
+    fig.show()
 
     # Question 6 - Maximum likelihood
-    raise NotImplementedError()
+    # raise NotImplementedError()
+    print(max_likelihood)
+    print((round(max_i, 4), round(max_j, 4)))
 
+    q1 = np.array(
+        [1, 5, 2, 3, 8, -4, -2, 5, 1, 10, -10, 4, 5, 2, 7, 1, 1, 3, 2, -1, -3,
+         1, -4, 1, 2, 1,
+         -4, -4, 1, 3, 2, 6, -6, 8, 3, -6, 4, 1, -2, 3, 1, 4, 1, 4, -2, 3, -1,
+         0, 3, 5, 0, -2])
+
+    mu1, sigma1 = 1, 1
+    estimator1 = UnivariateGaussian()
+    estimator1.fit(q1)
+
+    print("quizeee:")
+    print(estimator1.log_likelihood(10, 1, q1))
 
 if __name__ == '__main__':
     np.random.seed(0)
-    # test_univariate_gaussian()
+    test_univariate_gaussian()
     test_multivariate_gaussian()

@@ -52,9 +52,11 @@ class UnivariateGaussian:
         estimator is either biased or unbiased). Then sets `self.fitted_` attribute to `True`
         """
         # raise NotImplementedError()
-
         self.mu_ = np.mean(X)
-        self.var_ = np.var(X)
+        if self.biased_ is True:
+            self.var_ = np.var(X)
+        else:
+            self.var_ = np.var(X, ddof=1)
         self.fitted_ = True
         return self
 
@@ -108,10 +110,9 @@ class UnivariateGaussian:
         inner_sum = inner.sum()
         sigma_sqrd = sigma**2
         m = X.size
-        pdf_calc = np.exp(-inner_sum / (2 * sigma_sqrd)) / (np.sqrt(2 * np.pi * sigma_sqrd))**m
-        log_all = np.log(pdf_calc)
+        pdf_log = (-inner_sum / (2 * sigma_sqrd)) - np.log((np.sqrt(2 * np.pi * sigma_sqrd))**m)
 
-        return log_all
+        return pdf_log
 
 
 class MultivariateGaussian:
@@ -186,11 +187,14 @@ class MultivariateGaussian:
             raise ValueError("Estimator must first be fitted before calling `pdf` function")
         # raise NotImplementedError()
 
-        minus_mu = X - self.mu_
-        above = np.exp(-(np.dot(np.dot(minus_mu, (1 / self.cov_)), minus_mu.transpose())) / 2)
-        ret_mat = above / ((np.sqrt((2 * np.pi) ** len(self.mu_)) * np.abs(self.cov_)))
+        m, d = X.shape
+        ret = np.zeros(m)
+        for i in range(m):
+            X_minus_mu = X[i] - self.mu_
+            above = np.exp(-0.5 * np.dot(np.dot(X_minus_mu.transpose(), inv(self.cov_)), X_minus_mu))
+            ret[i] = above / np.sqrt((2 * np.pi)**d * det(self.cov_))
 
-        return ret_mat
+        return ret
 
     @staticmethod
     def log_likelihood(mu: np.ndarray, cov: np.ndarray, X: np.ndarray) -> float:
@@ -211,4 +215,11 @@ class MultivariateGaussian:
         log_likelihood: float
             log-likelihood calculated over all input data and under given parameters of Gaussian
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+
+        m, d = X.shape
+        log_part = d * np.log(2 * np.pi) + np.log(det(cov))
+        sum = np.sum((X - mu) @ inv(cov) * (X - mu))
+        ret = -0.5 * (m * log_part + sum)
+
+        return ret
