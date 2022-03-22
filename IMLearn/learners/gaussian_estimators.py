@@ -106,13 +106,13 @@ class UnivariateGaussian:
         """
         # raise NotImplementedError()
 
-        inner = (X - mu)**2
-        inner_sum = inner.sum()
+        var = (X - mu)**2
+        var_sum = var.sum()
         sigma_sqrd = sigma**2
         m = X.size
-        pdf_log = (-inner_sum / (2 * sigma_sqrd)) - np.log((np.sqrt(2 * np.pi * sigma_sqrd))**m)
+        logged_ret = (-var_sum / (2 * sigma_sqrd)) - np.log((np.sqrt(2 * np.pi * sigma_sqrd))**m)
 
-        return pdf_log
+        return logged_ret
 
 
 class MultivariateGaussian:
@@ -191,8 +191,8 @@ class MultivariateGaussian:
         ret = np.zeros(m)
         for i in range(m):
             X_minus_mu = X[i] - self.mu_
-            above = np.exp(-0.5 * np.dot(np.dot(X_minus_mu.transpose(), inv(self.cov_)), X_minus_mu))
-            ret[i] = above / np.sqrt((2 * np.pi)**d * det(self.cov_))
+            numerator = np.exp(-0.5 * np.dot(np.dot(X_minus_mu.transpose(), inv(self.cov_)), X_minus_mu))
+            ret[i] = numerator / np.sqrt((2 * np.pi)**d * det(self.cov_))
 
         return ret
 

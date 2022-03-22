@@ -26,19 +26,18 @@ def test_univariate_gaussian():
         estimator = UnivariateGaussian()
         estimator.fit(si)
         Y.append(abs(estimator.mu_ - mu1))
-    print(Y)
     fig = make_subplots(rows=1, cols=1).add_traces([go.Scatter(x=X, y=Y, mode='lines', marker=dict(color="black"), showlegend=False)],rows=[1], cols=[1])
     fig.update_xaxes(title_text="Number of samples")
     fig.update_yaxes(title_text="Loss")
     fig.update_layout(
         title_text=r"$\text{(question 2) Loss as function of sample size}$")
     fig.show()
+
     # Question 3 - Plotting Empirical PDF of fitted model
     # raise NotImplementedError()
-    # X = s
     Y = estimator1.pdf(s)
     fig2 = make_subplots(rows=1, cols=1).add_traces([go.Scatter(x=s, y=Y, mode='markers', marker=dict(color="black"), showlegend=False)],rows=[1], cols=[1])
-    fig2.update_xaxes(title_text="sample value")
+    fig2.update_xaxes(title_text="Sample value")
     fig2.update_yaxes(title_text="PDF calculation")
     fig2.update_layout(
         title_text=r"$\text{(question 3) probability density function by each sample}$", title_font_size=30)
@@ -56,12 +55,8 @@ def test_multivariate_gaussian():
     print(estimator.mu_)
     print(estimator.cov_)
 
-    # print(estimator.pdf(s))
-
     # Question 5 - Likelihood evaluation
     # raise NotImplementedError()
-    print(estimator.log_likelihood(mu, sigma, s))
-
     f = np.linspace(-10, 10, 200)
     f1 = f
     f3 = f
@@ -78,34 +73,19 @@ def test_multivariate_gaussian():
                 max_j = j
             new.append(likelihood)
         center.append(new)
-
-
-    fig = go.Figure().add_trace(go.Heatmap(x=f, y=f, z=center, colorscale = 'Greens', reversescale = True, xaxis = 'x', yaxis = 'y'))
+    fig = go.Figure().add_trace(go.Heatmap(x=f, y=f, z=center, colorscale = 'Hot', reversescale = True, xaxis = 'x', yaxis = 'y'))
     fig.update_layout(width=700, height=700)
-    fig.update_xaxes(title_text="f1")
-    fig.update_yaxes(title_text="f3")
+    fig.update_xaxes(title_text="f3")
+    fig.update_yaxes(title_text="f1")
     fig.update_layout(
-        title_text=r"$\text{(question 5) heatmap of log-likelihood for f1 and f3 in mean}$",
+        title_text=r"$\text{(question 5) Heatmap of log-likelihood for f1 and f3 in mean}$",
         title_font_size=30)
     fig.show()
 
     # Question 6 - Maximum likelihood
     # raise NotImplementedError()
-    print(max_likelihood)
     print((round(max_i, 4), round(max_j, 4)))
 
-    q1 = np.array(
-        [1, 5, 2, 3, 8, -4, -2, 5, 1, 10, -10, 4, 5, 2, 7, 1, 1, 3, 2, -1, -3,
-         1, -4, 1, 2, 1,
-         -4, -4, 1, 3, 2, 6, -6, 8, 3, -6, 4, 1, -2, 3, 1, 4, 1, 4, -2, 3, -1,
-         0, 3, 5, 0, -2])
-
-    mu1, sigma1 = 1, 1
-    estimator1 = UnivariateGaussian()
-    estimator1.fit(q1)
-
-    print("quizeee:")
-    print(estimator1.log_likelihood(10, 1, q1))
 
 if __name__ == '__main__':
     np.random.seed(0)
