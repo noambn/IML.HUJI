@@ -84,7 +84,6 @@ class UnivariateGaussian:
 
         return ret_mat
 
-    # todo: check if we need to sum all or not
     @staticmethod
     def log_likelihood(mu: float, sigma: float, X: np.ndarray) -> float:
         """
