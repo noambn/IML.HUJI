@@ -27,20 +27,21 @@ def test_univariate_gaussian():
         estimator.fit(si)
         Y.append(abs(estimator.mu_ - mu1))
     fig = make_subplots(rows=1, cols=1).add_traces([go.Scatter(x=X, y=Y, mode='lines', marker=dict(color="black"), showlegend=False)],rows=[1], cols=[1])
-    fig.update_xaxes(title_text="Number of samples")
-    fig.update_yaxes(title_text="Loss")
+    fig.update_xaxes(title_text="Number of samples", title_font_size=15)
+    fig.update_yaxes(title_text="Loss", title_font_size=15)
     fig.update_layout(
-        title_text=r"$\text{(question 2) Loss as function of sample size}$")
+        title_text=r"$\text{(question 2) Loss as function of sample size}$", title_font_size=30, width=1200, height=700)
+    fig.update_layout()
     fig.show()
 
     # Question 3 - Plotting Empirical PDF of fitted model
     # raise NotImplementedError()
     Y = estimator1.pdf(s)
     fig2 = make_subplots(rows=1, cols=1).add_traces([go.Scatter(x=s, y=Y, mode='markers', marker=dict(color="black"), showlegend=False)],rows=[1], cols=[1])
-    fig2.update_xaxes(title_text="Sample value")
-    fig2.update_yaxes(title_text="PDF calculation")
+    fig2.update_xaxes(title_text="Sample value", title_font_size=15)
+    fig2.update_yaxes(title_text="PDF calculation", title_font_size=15)
     fig2.update_layout(
-        title_text=r"$\text{(question 3) probability density function by each sample}$", title_font_size=30)
+        title_text=r"$\text{(question 3) probability density function by each sample}$", title_font_size=30, width=1200, height=700)
     fig2.show()
 
 
@@ -74,9 +75,9 @@ def test_multivariate_gaussian():
             new.append(likelihood)
         center.append(new)
     fig = go.Figure().add_trace(go.Heatmap(x=f, y=f, z=center, colorscale = 'Hot', reversescale = True, xaxis = 'x', yaxis = 'y'))
-    fig.update_layout(width=700, height=700)
-    fig.update_xaxes(title_text="f3")
-    fig.update_yaxes(title_text="f1")
+    fig.update_layout(width=800, height=700)
+    fig.update_xaxes(title_text="f3", title_font_size=15)
+    fig.update_yaxes(title_text="f1", title_font_size=15)
     fig.update_layout(
         title_text=r"$\text{(question 5) Heatmap of log-likelihood for f1 and f3 in mean}$",
         title_font_size=30)
@@ -84,7 +85,7 @@ def test_multivariate_gaussian():
 
     # Question 6 - Maximum likelihood
     # raise NotImplementedError()
-    print((round(max_i, 4), round(max_j, 4)))
+    print((round(max_i, 3), round(max_j, 3)))
 
 
 if __name__ == '__main__':
