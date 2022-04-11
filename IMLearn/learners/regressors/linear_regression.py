@@ -4,6 +4,7 @@ from ...base import BaseEstimator
 import numpy as np
 from numpy import ndarray
 from numpy.linalg import pinv
+from IMLearn.metrics.loss_functions import mean_square_error
 
 
 class LinearRegression(BaseEstimator):
@@ -51,7 +52,9 @@ class LinearRegression(BaseEstimator):
         Fits model with or without an intercept depending on value of `self.include_intercept_`
         """
         # raise NotImplementedError()
-        self.coefs_ = X.conjugate() * y  # todo: verify if getH or something else
+        if self.include_intercept_:
+            X = np.insert(X, obj=0, values=1, axis=1)
+        self.coefs_ = pinv(X) @ y
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -68,7 +71,8 @@ class LinearRegression(BaseEstimator):
             Predicted responses of given samples
         """
         # raise NotImplementedError()
-        # X * w_hat
+        if self.include_intercept_:
+            X = np.insert(X, obj=0, values=1, axis=1)
         return X @ self.coefs_
 
 
@@ -90,8 +94,6 @@ class LinearRegression(BaseEstimator):
             Performance under MSE loss function
         """
         # raise NotImplementedError()
-        # based on the loss function in loss_functions.py the I wrote
+        # based on the loss function in loss_functions.py that I wrote
         y_pred = self._predict(X)
-        n = len(y_pred)
-        squared_error = np.power(y_pred - y, 2)
-        return sum(squared_error) / n
+        return mean_square_error(y, y_pred)

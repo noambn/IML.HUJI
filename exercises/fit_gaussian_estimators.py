@@ -76,8 +76,8 @@ def test_multivariate_gaussian():
         center.append(new)
     fig = go.Figure().add_trace(go.Heatmap(x=f, y=f, z=center, colorscale = 'Hot', reversescale = True, xaxis = 'x', yaxis = 'y'))
     fig.update_layout(width=800, height=700)
-    fig.update_xaxes(title_text="f3 values", title_font_size=15)
-    fig.update_yaxes(title_text="f1 values", title_font_size=15)
+    fig.update_xaxes(title_text="f3", title_font_size=15)
+    fig.update_yaxes(title_text="f1", title_font_size=15)
     fig.update_layout(
         title_text=r"$\text{(question 5) Heatmap of log-likelihood for f1 and f3 in mean}$",
         title_font_size=30)
@@ -86,6 +86,7 @@ def test_multivariate_gaussian():
     # Question 6 - Maximum likelihood
     # raise NotImplementedError()
     print((round(max_i, 3), round(max_j, 3)))
+
 
 if __name__ == '__main__':
     np.random.seed(0)
