@@ -4,6 +4,7 @@ from utils import *
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from math import atan2, pi
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 
 def load_dataset(filename: str) -> Tuple[np.ndarray, np.ndarray]:
@@ -38,14 +39,32 @@ def run_perceptron():
     """
     for n, f in [("Linearly Separable", "linearly_separable.npy"), ("Linearly Inseparable", "linearly_inseparable.npy")]:
         # Load dataset
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        X, Y = load_dataset("../datasets/" + f)
 
         # Fit Perceptron and record loss in each fit iteration
         losses = []
-        raise NotImplementedError()
+        # raise NotImplementedError()
+
+        # def callback()
+        def callback(fit: Perceptron, x: np.ndarray, y: int):
+            losses.append(fit.loss(X, Y))
+
+        p_estimator = Perceptron(callback=callback)
+        p_estimator.fit(X, Y)
+        print(losses)
 
         # Plot figure of loss as function of fitting iteration
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        fitting_iteration = np.linspace(1, 1000, num=1000)
+        fig = go.Figure((go.Scatter(x=fitting_iteration, y=losses,
+                                mode="lines", name="Fitting iteration",
+                                marker=dict(color="green"))))
+        fig.update_layout(
+            title_text=f"(Question 1) Loss as function of fitting iteration - {n}",
+            xaxis_title='Loss', yaxis_title='Fitting iteration',
+            title_font_size=30, width=1200, height=700)
+        # fig.show()
 
 
 def get_ellipse(mu: np.ndarray, cov: np.ndarray):
@@ -79,16 +98,45 @@ def compare_gaussian_classifiers():
     """
     for f in ["gaussian1.npy", "gaussian2.npy"]:
         # Load dataset
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        X, Y = load_dataset("../datasets/" + f)
 
         # Fit models and predict over training set
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        lda_estimator = LDA()
+        lda_estimator.fit(X, Y)
+        lda_y_prad = lda_estimator.predict(X)
+
+        gnb_estimator = GaussianNaiveBayes()
+        gnb_estimator.fit(X, Y)
+        gnb_y_pred = gnb_estimator.predict(X)
+
 
         # Plot a figure with two suplots, showing the Gaussian Naive Bayes predictions on the left and LDA predictions
         # on the right. Plot title should specify dataset used and subplot titles should specify algorithm and accuracy
         # Create subplots
         from IMLearn.metrics import accuracy
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        gnb_accuracy = accuracy(Y, gnb_y_pred)
+        lda_accuracy = accuracy(Y, lda_y_prad)
+        fig = make_subplots(rows=1, cols=2,
+                            subplot_titles=(f"Gaussian naive bayes with accuracy of {gnb_accuracy}", f"Linear discriminant analysis with accuracy of {lda_accuracy}"))
+        # add the GNB trace
+        fig.add_trace(go.Scatter(x=X[:, 0], y=X[:, 1],
+                                mode="markers",
+                                line=dict(dash="dash"),
+                                marker=dict(color="green", opacity=.7)), row=1, col=1)
+
+        fig.add_trace(go.Scatter(x=X[:, 0], y=X[:, 1],
+                                 mode="markers",
+                                 line=dict(dash="dash"),
+                                 marker=dict(color="green", opacity=.7)),
+                      row=1, col=1)
+
+        fig.update_layout(height=500, width=700,
+                          title_text="(Bayes Classifiers - Question 1)")
+
+        fig.show()
 
         # Add traces for data-points setting symbols and colors
         raise NotImplementedError()
@@ -102,5 +150,5 @@ def compare_gaussian_classifiers():
 
 if __name__ == '__main__':
     np.random.seed(0)
-    run_perceptron()
+    # run_perceptron()
     compare_gaussian_classifiers()
