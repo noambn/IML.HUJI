@@ -4,8 +4,6 @@ from utils import *
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from math import atan2, pi
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-
 
 def load_dataset(filename: str) -> Tuple[np.ndarray, np.ndarray]:
     """
@@ -124,27 +122,23 @@ def compare_gaussian_classifiers():
         fig.add_trace(go.Scatter(x=X[:, 0], y=X[:, 1],
                                 mode="markers",
                                 showlegend=False,
-                                # line=dict(dash="dash"),
                                 marker=dict(color=gnb_y_pred, symbol=Y, opacity=.9)), row=1, col=1)
-                                #  line=dict(color='black', width=1)
 
         # add theLDA trace
         fig.add_trace(go.Scatter(x=X[:, 0], y=X[:, 1],
                                  mode="markers",
                                  showlegend=False,
-                                 line=dict(dash="dash"),
                                  marker=dict(color=lda_y_prad, symbol=Y, opacity=.9)),
                       row=1, col=2)
 
-        fig.update_layout(title_text="(Bayes Classifiers)")
+        fig.update_layout(title_text="Bayes Classifiers")
         for k in range(lda_estimator.classes_.size):
             fig.add_trace(get_ellipse(lda_estimator.mu_[k], lda_estimator.cov_), row=1, col=2)
             fig.add_trace(get_ellipse(gnb_estimator.mu_[k], np.diag(gnb_estimator.vars_[k])),
                            row=1, col=1)
             fig.add_trace(go.Scatter(x=[lda_estimator.mu_[k][0]], y=[lda_estimator.mu_[k][1]], mode="markers",
-                                 line=dict(dash="dash"),
                                  showlegend=False,
-                                 marker=dict(color="black", symbol="x", opacity=.9)),
+                                 marker=dict(color="black", symbol="x", opacity=.9, size=10)),
                       row=1, col=2)
             fig.add_trace(go.Scatter(x=[gnb_estimator.mu_[k][0]],
                                      y=[gnb_estimator.mu_[k][1]],
@@ -152,22 +146,22 @@ def compare_gaussian_classifiers():
                                      showlegend=False,
                                      line=dict(dash="dash"),
                                      marker=dict(color="black", symbol="x",
-                                                 opacity=.9)),
+                                                 opacity=.9,size=10)),
                           row=1, col=1)
 
-        # # Add traces for data-points setting symbols and colors
+        # Add traces for data-points setting symbols and colors
         # raise NotImplementedError()
-        #
-        #
-        # # Add `X` dots specifying fitted Gaussians' means
+
+
+        # Add `X` dots specifying fitted Gaussians' means
         # raise NotImplementedError()
-        #
-        # # Add ellipses depicting the covariances of the fitted Gaussians
+
+        # Add ellipses depicting the covariances of the fitted Gaussians
         # raise NotImplementedError()
 
         fig.show()
 
 if __name__ == '__main__':
     np.random.seed(0)
-    # run_perceptron()
+    run_perceptron()
     compare_gaussian_classifiers()
