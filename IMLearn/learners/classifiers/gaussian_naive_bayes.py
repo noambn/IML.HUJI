@@ -48,14 +48,10 @@ class GaussianNaiveBayes(BaseEstimator):
             self.vars_[i, :] = np.var(X[y == cl], axis=0, ddof=1)
         self.mu_ = np.asarray(means)
         self.vars_ = np.asarray(self.vars_)
-        print("classes:", self.classes_)
-        print("mu:", self.mu_)
-        print("vars:", self.vars_.shape, self.vars_)
 
         self.pi_ = np.zeros(0)
         for i, label in zip(range(self.classes_.size), self.classes_):
             self.pi_ = np.insert(self.pi_, i, np.mean(y == label), axis=0)
-        print("pi: ", self.pi_)
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -93,25 +89,20 @@ class GaussianNaiveBayes(BaseEstimator):
             raise ValueError("Estimator must first be fitted before calling `likelihood` function")
 
         # raise NotImplementedError()
+
         m, d = X.shape
         num_classes = self.classes_.size
         ll = np.zeros((m, num_classes))
-        log_pi_sum = 0
-        for k in range(num_classes):
-            pi_k = self.pi_[k]
-            cl_count = pi_k * m
-            log_pi_sum += np.log(pi_k)
-            for i in range(m):
-                mean = (X[i] - self.mu_[k]) ** 2
-                var_divided_by_sigma = mean / self.vars_[k]
-                inner_sum = np.log(self.vars_[k]) + var_divided_by_sigma
-                ll[i, k] = -0.5 * np.sum(inner_sum)
 
-        # print("check")
-        md_log = m * d * np.log(2 * np.pi) / 2
-        print("log_pi_sum:", log_pi_sum)
-        ll = ll + log_pi_sum - md_log
-        print("ll:", ll)
+        for k in range(num_classes):
+            log_pi_k = np.log(self.pi_[k])
+            var_k = self.vars_[k]
+            for i in range(m):
+                mean_s = (X[i] - self.mu_[k]) ** 2
+                pi_var_log = np.log(2 * np.pi * var_k) / 2
+                mean_var_div = -mean_s / (2 * var_k)
+                row_sum = np.sum(mean_var_div - pi_var_log)
+                ll[i, k] = np.sum(row_sum + log_pi_k)
 
         return ll
 

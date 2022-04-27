@@ -52,19 +52,18 @@ def run_perceptron():
 
         p_estimator = Perceptron(callback=callback)
         p_estimator.fit(X, Y)
-        print(losses)
 
         # Plot figure of loss as function of fitting iteration
         # raise NotImplementedError()
         fitting_iteration = np.linspace(1, 1000, num=1000)
         fig = go.Figure((go.Scatter(x=fitting_iteration, y=losses,
                                 mode="lines", name="Fitting iteration",
-                                marker=dict(color="green"))))
+                                marker=dict(color="blue"))))
         fig.update_layout(
-            title_text=f"(Question 1) Loss as function of fitting iteration - {n}",
-            xaxis_title='Loss', yaxis_title='Fitting iteration',
-            title_font_size=30, width=1200, height=700)
-        # fig.show()
+            title_text=f"Loss as function of fitting iteration - {n}",
+            xaxis_title='Fitting iteration', yaxis_title='Loss',
+            title_font_size=20, width=1200, height=700)
+        fig.show()
 
 
 def get_ellipse(mu: np.ndarray, cov: np.ndarray):
@@ -89,7 +88,7 @@ def get_ellipse(mu: np.ndarray, cov: np.ndarray):
     xs = (l1 * np.cos(theta) * np.cos(t)) - (l2 * np.sin(theta) * np.sin(t))
     ys = (l1 * np.sin(theta) * np.cos(t)) + (l2 * np.cos(theta) * np.sin(t))
 
-    return go.Scatter(x=mu[0] + xs, y=mu[1] + ys, mode="lines", marker_color="black")
+    return go.Scatter(x=mu[0] + xs, y=mu[1] + ys, mode="lines", marker_color="black", showlegend=False)
 
 
 def compare_gaussian_classifiers():
@@ -124,29 +123,49 @@ def compare_gaussian_classifiers():
         # add the GNB trace
         fig.add_trace(go.Scatter(x=X[:, 0], y=X[:, 1],
                                 mode="markers",
-                                line=dict(dash="dash"),
-                                marker=dict(color="green", opacity=.7)), row=1, col=1)
+                                showlegend=False,
+                                # line=dict(dash="dash"),
+                                marker=dict(color=gnb_y_pred, symbol=Y, opacity=.9)), row=1, col=1)
+                                #  line=dict(color='black', width=1)
 
+        # add theLDA trace
         fig.add_trace(go.Scatter(x=X[:, 0], y=X[:, 1],
                                  mode="markers",
+                                 showlegend=False,
                                  line=dict(dash="dash"),
-                                 marker=dict(color="green", opacity=.7)),
-                      row=1, col=1)
+                                 marker=dict(color=lda_y_prad, symbol=Y, opacity=.9)),
+                      row=1, col=2)
 
-        fig.update_layout(height=500, width=700,
-                          title_text="(Bayes Classifiers - Question 1)")
+        fig.update_layout(title_text="(Bayes Classifiers - Question 1)")
+        for k in range(lda_estimator.classes_.size):
+            fig.add_trace(get_ellipse(lda_estimator.mu_[k], lda_estimator.cov_), row=1, col=2)
+            fig.add_trace(get_ellipse(gnb_estimator.mu_[k], np.diag(gnb_estimator.vars_[k])),
+                           row=1, col=1)
+            fig.add_trace(go.Scatter(x=[lda_estimator.mu_[k][0]], y=[lda_estimator.mu_[k][1]], mode="markers",
+                                 line=dict(dash="dash"),
+                                 showlegend=False,
+                                 marker=dict(color="black", symbol="x", opacity=.9)),
+                      row=1, col=2)
+            fig.add_trace(go.Scatter(x=[gnb_estimator.mu_[k][0]],
+                                     y=[gnb_estimator.mu_[k][1]],
+                                     mode="markers",
+                                     showlegend=False,
+                                     line=dict(dash="dash"),
+                                     marker=dict(color="black", symbol="x",
+                                                 opacity=.9)),
+                          row=1, col=1)
+
+        # # Add traces for data-points setting symbols and colors
+        # raise NotImplementedError()
+        #
+        #
+        # # Add `X` dots specifying fitted Gaussians' means
+        # raise NotImplementedError()
+        #
+        # # Add ellipses depicting the covariances of the fitted Gaussians
+        # raise NotImplementedError()
 
         fig.show()
-
-        # Add traces for data-points setting symbols and colors
-        raise NotImplementedError()
-
-        # Add `X` dots specifying fitted Gaussians' means
-        raise NotImplementedError()
-
-        # Add ellipses depicting the covariances of the fitted Gaussians
-        raise NotImplementedError()
-
 
 if __name__ == '__main__':
     np.random.seed(0)

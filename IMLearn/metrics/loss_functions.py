@@ -68,7 +68,6 @@ def accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     Accuracy of given predictions
     """
     # raise NotImplementedError()
-    # in presentation 3 slide 15
     size = y_true.shape[0]
     trues = 0
     for i in range(size):
