@@ -136,7 +136,7 @@ def compare_gaussian_classifiers():
                                  marker=dict(color=lda_y_prad, symbol=Y, opacity=.9)),
                       row=1, col=2)
 
-        fig.update_layout(title_text="(Bayes Classifiers - Question 1)")
+        fig.update_layout(title_text="(Bayes Classifiers)")
         for k in range(lda_estimator.classes_.size):
             fig.add_trace(get_ellipse(lda_estimator.mu_[k], lda_estimator.cov_), row=1, col=2)
             fig.add_trace(get_ellipse(gnb_estimator.mu_[k], np.diag(gnb_estimator.vars_[k])),

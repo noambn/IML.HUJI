@@ -113,6 +113,7 @@ class LDA(BaseEstimator):
             mahalanobis = np.einsum("bi,ij,bj->b", cur_x_mu, self._cov_inv, cur_x_mu)
             exponent = -0.5 * mahalanobis
             ll[:, i] = np.exp(exponent) * cur_pi / np.sqrt((2 * np.pi)**d * det(self.cov_))
+        print("likelihood:", ll)
         return ll
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
