@@ -42,12 +42,19 @@ class DecisionStump(BaseEstimator):
             Responses of input data to fit to
         """
         # raise NotImplementedError()
-        self.sign_ = 1
-        best_f = X[0]
+        plus = 1
+        minus = -1
+        sign = plus
+        best_f = 0
         best_thr = 0
         min_err = np.inf
-        for f in X:
-            thr, thr_error = self._find_threshold(f, y, self.sign_)
+        for f in range(X.shape[1]):
+            sign = plus
+            thr, thr_error = self._find_threshold(X[:, f], y, plus)
+            thr_m, thr_error_m = self._find_threshold(X[:, f], y, minus)
+            if thr_error > thr_error_m:
+                thr, thr_error = thr_m, thr_error_m
+                sign = minus
             if min_err > thr_error:
                 min_err = thr_error
                 best_f = f
@@ -55,6 +62,8 @@ class DecisionStump(BaseEstimator):
 
         self.j_ = best_f
         self.threshold_ = best_thr
+        self.sign_ = sign
+
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -79,7 +88,8 @@ class DecisionStump(BaseEstimator):
         to or above the threshold are predicted as `sign`
         """
         # raise NotImplementedError()
-        return np.where(self.j_ >= self.threshold_, self.sign_, -self.sign_)
+        return np.where(X[:, self.j_] >= self.threshold_, self.sign_, -self.sign_)
+
 
 
     def _find_threshold(self, values: np.ndarray, labels: np.ndarray,
@@ -114,18 +124,30 @@ class DecisionStump(BaseEstimator):
         which equal to or above the threshold are predicted as `sign`
         """
         # raise NotImplementedError()
-        thr_err = 1.0
-        thr = 0.0
-        # checks all the potential thresholds
-        for t in values:
-            b = np.where(values >= t, sign, -sign)
-            # should I seperate it like in the algorithm?
-            g = misclassification_error(y_true=labels, y_pred=b)
-            if thr_err >= g:
-                thr_err = g
-                thr = t
+        # thr_err = 1.0
+        # thr = 0.0
+        # # checks all the potential thresholds
+        # for t in values:
+        #     b = np.where(values >= t, sign, -sign)
+        #     # should I seperate it like in the algorithm?
+        #     g = misclassification_error(y_true=labels, y_pred=b)
+        #     if thr_err > g:
+        #         thr_err = g
+        #         thr = t
+        # thr_err = np.sum(labels[np.sign(labels) == sign])
+        # thr = np.concatenate([[-np.inf], (values[1:] + values[:-1]) / 2, [np.inf]])
+        # losses = np.append(thr_err, thr_err - np.cumsum(labels * sign))
+        # min_loss = np.argmin(losses)
+        # return thr[min_loss], losses[min_loss]
 
-        return thr, thr_err
+        sorted = np.argsort(values)
+        values, labels = values[sorted], labels[sorted]
+        thr_err = np.sum(np.abs(labels[np.sign(labels) == sign]))
+        thr = np.concatenate(
+            [[-np.inf], (values[1:] + values[:-1]) / 2, [np.inf]])
+        losses = np.append(thr_err, thr_err - np.cumsum(labels * sign))
+        minimal_loss = np.argmin(losses)
+        return thr[minimal_loss], losses[minimal_loss]
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """
