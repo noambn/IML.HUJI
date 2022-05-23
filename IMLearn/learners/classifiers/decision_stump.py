@@ -124,21 +124,6 @@ class DecisionStump(BaseEstimator):
         which equal to or above the threshold are predicted as `sign`
         """
         # raise NotImplementedError()
-        # thr_err = 1.0
-        # thr = 0.0
-        # # checks all the potential thresholds
-        # for t in values:
-        #     b = np.where(values >= t, sign, -sign)
-        #     # should I seperate it like in the algorithm?
-        #     g = misclassification_error(y_true=labels, y_pred=b)
-        #     if thr_err > g:
-        #         thr_err = g
-        #         thr = t
-        # thr_err = np.sum(labels[np.sign(labels) == sign])
-        # thr = np.concatenate([[-np.inf], (values[1:] + values[:-1]) / 2, [np.inf]])
-        # losses = np.append(thr_err, thr_err - np.cumsum(labels * sign))
-        # min_loss = np.argmin(losses)
-        # return thr[min_loss], losses[min_loss]
 
         sorted = np.argsort(values)
         values, labels = values[sorted], labels[sorted]

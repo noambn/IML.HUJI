@@ -148,6 +148,5 @@ class AdaBoost(BaseEstimator):
             Performance under missclassification loss function
         """
         # raise NotImplementedError()
-        from ..metrics import misclassification_error
         y_pred = self.partial_predict(X, T)
         return np.sum(np.where(y_pred == y, 0, 1)) / y.size

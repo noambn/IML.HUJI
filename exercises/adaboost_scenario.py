@@ -100,7 +100,6 @@ def fit_and_evaluate_adaboost(noise, n_learners=250, train_size=5000,
 
     # Question 3: Decision surface of best performing ensemble
     # raise NotImplementedError()
-    # optimal_learners_number = int(np.argmin(losses_test))
     optimal_learners_number = None
     best_value = None
     for t in range(1, n_learners):

@@ -57,7 +57,7 @@ class PolynomialFitting(BaseEstimator):
             Predicted responses of given samples
         """
         # raise NotImplementedError()
-        return self.linreg_.predict(X)
+        return self.linreg_.predict(self.__transform(X))
 
     def _loss(self, X: np.ndarray, y: np.ndarray) -> float:
         """
