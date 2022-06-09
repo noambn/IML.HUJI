@@ -5,7 +5,6 @@ import numpy as np
 from numpy.linalg import inv
 from IMLearn.metrics.loss_functions import mean_square_error
 
-
 class RidgeRegression(BaseEstimator):
     """
     Ridge Regression Estimator
@@ -62,11 +61,13 @@ class RidgeRegression(BaseEstimator):
         Fits model with or without an intercept depending on value of `self.include_intercept_`
         """
         # raise NotImplementedError()
+        # X = X[:, np.newaxis]
         if self.include_intercept_:
             X = np.insert(X, obj=0, values=1, axis=1)
-        a = inv((X.transpose() @ X) + (self.lam_ * np.identity(X.shape[0])))
-        b = X.transpose() @ y
+        a = inv(X.T @ X + self.lam_ * np.identity(X.shape[1]))
+        b = X.T @ y
         self.coefs_ = a @ b
+
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
