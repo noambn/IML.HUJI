@@ -38,8 +38,6 @@ def cross_validate(estimator: BaseEstimator, X: np.ndarray, y: np.ndarray,
         Average validation score over folds
     """
 
-    # X = X.flatten()
-    # y = y.flatten()
     kf_X = np.array_split(X, cv, axis=0)
     kf_y = np.array_split(y, cv, axis=0)
 

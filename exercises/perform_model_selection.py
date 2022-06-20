@@ -76,7 +76,7 @@ def question_3(train_X, train_y, test_X, test_y, best_k, best_k_error, n_samples
     print(f"Test error of {best_k}-degree: {round(test_error, 2)}")
 
 def question_7(n_evaluations, train_X, train_y, test_X, test_y):
-    reg_parameters = 2 ** np.linspace(-4, 1, n_evaluations)
+    reg_parameters = 2 ** np.linspace(-4, 2, n_evaluations)
     ridge_training_errs = np.zeros(n_evaluations)
     ridge_validation_errs = np.zeros(n_evaluations)
     lasso_training_errs = np.zeros(n_evaluations)
@@ -91,8 +91,8 @@ def question_7(n_evaluations, train_X, train_y, test_X, test_y):
             Lasso(alpha=param, max_iter=10000), np.asarray(train_X),
             np.asarray(train_y), scoring=mean_square_error)
 
-    best_ridge_param = ridge_validation_errs[np.argmin(ridge_validation_errs)]
-    best_lasso_param = lasso_validation_errs[np.argmin(lasso_validation_errs)]
+    best_ridge_param = np.argmin(ridge_validation_errs)
+    best_lasso_param = np.argmin(lasso_validation_errs)
 
     fig = go.Figure([go.Scatter(x=reg_parameters,
                                 y=ridge_training_errs,
@@ -117,7 +117,7 @@ def question_7(n_evaluations, train_X, train_y, test_X, test_y):
 
     return best_ridge_param, best_lasso_param
 
-def question_8(n_evaluations, train_X, train_y, test_X, test_y, best_ridge_param, best_lasso_param):
+def question_8(train_X, train_y, test_X, test_y, best_ridge_param, best_lasso_param):
     trained_ridge = RidgeRegression(best_ridge_param)
     trained_ridge.fit(train_X, train_y)
     ridge_error = trained_ridge.loss(test_X, test_y)
@@ -126,8 +126,14 @@ def question_8(n_evaluations, train_X, train_y, test_X, test_y, best_ridge_param
     trained_lasso.fit(train_X, train_y)
     lasso_error = mean_square_error(trained_lasso.predict(test_X), test_y)
 
-    print(f"Ridge test error of {best_ridge_param}-parameter: {ridge_error}")
-    print(f"Ridge test error of {best_lasso_param}-parameter: {lasso_error}")
+    linear_reg = LinearRegression()
+    linear_reg.fit(train_X, train_y)
+    linear_reg_error = linear_reg.loss(test_X, test_y)
+
+    print(f"Ridge test error of {round(best_ridge_param, 3)}-parameter: {round(ridge_error, 3)}")
+    print(f"Lasso test error of {round(best_lasso_param, 3)}-parameter: {round(lasso_error, 3)}")
+    print(
+        f"Least squares test error: {round(linear_reg_error, 3)}")
 
 
 def select_polynomial_degree(n_samples: int = 100, noise: float = 5):
@@ -183,8 +189,7 @@ def select_regularization_parameter(n_samples: int = 50, n_evaluations: int = 50
 
     # Question 8 - Compare best Ridge model, best Lasso model and Least Squares model
     # raise NotImplementedError()
-
-    question_8(n_evaluations, train_X, train_y, test_X, test_y,
+    question_8(train_X, train_y, test_X, test_y,
                best_ridge_param, best_lasso_param)
 
 
@@ -196,4 +201,5 @@ if __name__ == '__main__':
     select_polynomial_degree(noise=0)
     print("\nquestion 5:")
     select_polynomial_degree(1500, 10)
+    print("\n")
     select_regularization_parameter()

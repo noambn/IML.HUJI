@@ -19,6 +19,7 @@ class L2(BaseModule):
         """
         super().__init__(weights)
 
+
     def compute_output(self, **kwargs) -> np.ndarray:
         """
         Compute the output value of the L2 function at point self.weights
@@ -33,7 +34,9 @@ class L2(BaseModule):
         output: ndarray of shape (1,)
             Value of function at point self.weights
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        res = np.square(np.linalg.norm(self.weights, ord=2))
+        return res
 
     def compute_jacobian(self, **kwargs) -> np.ndarray:
         """
@@ -49,7 +52,8 @@ class L2(BaseModule):
         output: ndarray of shape (n_in,)
             L2 derivative with respect to self.weights at point self.weights
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        return np.gradient(self.weights)
 
 
 class L1(BaseModule):
@@ -78,7 +82,9 @@ class L1(BaseModule):
         output: ndarray of shape (1,)
             Value of function at point self.weights
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        res = np.linalg.norm(self.weights, ord=1)
+        return res
 
     def compute_jacobian(self, **kwargs) -> np.ndarray:
         """
@@ -94,8 +100,8 @@ class L1(BaseModule):
         output: ndarray of shape (n_in,)
             L1 derivative with respect to self.weights at point self.weights
         """
-        raise NotImplementedError()
-
+        # raise NotImplementedError()
+        return np.gradient(self.weights)
 
 class LogisticModule(BaseModule):
     """
@@ -131,7 +137,12 @@ class LogisticModule(BaseModule):
         output: ndarray of shape (1,)
             Value of function at point self.weights
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        m = X.shape[0]
+        sigmoid = 1 / (1 + np.exp(-np.inner(X, self.weights)))
+        to_sum = y * np.inner(X, self.weights) - np.log(sigmoid)
+        return np.asarray(- (1 / m) * np.sum(to_sum))
+
 
     def compute_jacobian(self, X: np.ndarray, y: np.ndarray, **kwargs) -> np.ndarray:
         """
@@ -150,7 +161,8 @@ class LogisticModule(BaseModule):
         output: ndarray of shape (n_features,)
             Derivative of function with respect to self.weights at point self.weights
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        # return np.gradient()
 
 
 class RegularizedModule(BaseModule):

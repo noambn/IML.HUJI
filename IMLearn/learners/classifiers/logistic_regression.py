@@ -5,6 +5,7 @@ import numpy as np
 from IMLearn import BaseEstimator
 from IMLearn.desent_methods import GradientDescent
 from IMLearn.desent_methods.modules import LogisticModule, RegularizedModule, L1, L2
+from IMLearn.matrices.loss_functions import mean_square_error
 
 
 class LogisticRegression(BaseEstimator):
@@ -48,7 +49,14 @@ class LogisticRegression(BaseEstimator):
         Fits model using specified `self.optimizer_` passed when instantiating class and includes an intercept
         if specified by `self.include_intercept_
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        if self.include_intercept_:
+            X = np.insert(X, obj=0, values=1, axis=1)
+
+
+        # todo: page 4 in recitation 6
+
+        return np.argmax()
 
     def _predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -99,4 +107,6 @@ class LogisticRegression(BaseEstimator):
         loss : float
             Performance under misclassification loss function
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        y_pred = self._predict(X)
+        return mean_square_error(y, y_pred)

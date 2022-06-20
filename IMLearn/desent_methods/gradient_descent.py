@@ -119,4 +119,14 @@ class GradientDescent:
                 Euclidean norm of w^(t)-w^(t-1)
 
         """
-        raise NotImplementedError()
+        raise NotImplementedError
+        w = np.arange(self.max_iter_)
+        # in tirgul minute 18 - talks about the stop condition
+        # and in minute 37 something like what I need
+        for t in range(self.max_iter_):
+
+            if np.linalg.norm(w[t] - w[t-1]):
+                break
+
+            self.callback_(self, self.f.weights, wights, )
+
