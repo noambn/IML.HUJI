@@ -78,7 +78,8 @@ class GradientDescent:
 
     def fit(self, f: BaseModule, X: np.ndarray, y: np.ndarray):
         """
-        Optimize module using Gradient Descent iterations over given input samples and responses
+        Optimize module using Gradient Descent iterations over given input
+        samples and responses
 
         Parameters
         ----------
@@ -119,14 +120,25 @@ class GradientDescent:
                 Euclidean norm of w^(t)-w^(t-1)
 
         """
-        raise NotImplementedError
-        w = np.arange(self.max_iter_)
-        # in tirgul minute 18 - talks about the stop condition
-        # and in minute 37 something like what I need
-        for t in range(self.max_iter_):
+        # raise NotImplementedError
+        calc_out = {"last": lambda x: x[:, -1],
+                    "best": lambda x: x[:, np.argmin(objectives)],
+                    "average": lambda x: np.sum(x, axis=1) / x.shape[1]}
 
-            if np.linalg.norm(w[t] - w[t-1]):
+        weights_history = np.zeros((f.weights.size, self.max_iter_ + 1))
+        weights_history[:, 0] = f.weights
+        obj_m = f.compute_output(X=X, y=y).size
+        objectives = np.ones((obj_m, self.max_iter_))
+        for t in range(0, self.max_iter_):
+            weights_history[:, t+1] = weights_history[:, t] - self.learning_rate_.lr_step(t=t) * f.compute_jacobian(X=X, y=y)
+            delta = np.linalg.norm(weights_history[:, t+1] - weights_history[:, t], ord=2)
+            self.callback_(solver=self, weights=weights_history[:, t],
+                           val=f.compute_output(X=X, y=y),
+                           grad=f.compute_jacobian(X=X, y=y), t=t,
+                           eta=self.learning_rate_.lr_step(t=t), delta=delta)
+            objectives[:, t] = f.compute_output(X=X, y=y)
+            f.weights_ = weights_history[:, t+1]
+            if delta <= self.tol_:
                 break
 
-            self.callback_(self, self.f.weights, wights, )
-
+        return calc_out[self.out_type_](weights_history)
